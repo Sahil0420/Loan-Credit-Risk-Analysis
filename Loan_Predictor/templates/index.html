@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Default Predictor</title>
+
+    <!-- Simple styling -->
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e9ecef;
+            padding: 20px;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 760px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #343a40;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px 30px;
+            padding: 0 10px;
+        }
+
+        .grid-item {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            margin: 0 0 15px 0;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            box-sizing: border-box;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            outline: none;
+        }
+
+        .btn {
+            grid-column: 1 / -1;
+            width: 100%;
+            padding: 14px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 17px;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            grid-column: 1 / -1;
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 20px;
+                padding: 20px;
+            }
+
+            .btn,
+            .result {
+                grid-column: 1 / -1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Loan Default Prediction</h2>
+
+        <form action="/predict_form" method="post">
+
+            <!-- NUMERIC INPUTS -->
+            <div class="grid-item">
+                <label>Age:</label>
+                <input type="number" name="person_age" placeholder="Your Current Age" required>
+            </div>
+
+            <div class="grid-item">
+
+                <label>Annual Income:</label>
+                <input type="number" id="annual_income" name="person_income" placeholder="Income in USD" required>
+            </div>
+
+            <div class="grid-item">
+
+                <label>Employment Length (Years):</label>
+                <input type="number" name="person_emp_length" placeholder="Your Employment Length" required>
+            </div>
+
+            <div class="grid-item">
+                <label>Loan Amount:</label>
+                <input type="number" name="loan_amnt" id="loan_amount" placeholder="Loan Amount" required>
+            </div>
+
+            <div class="grid-item">
+
+                <label>Interest Rate (%):</label>
+                <input type="number" step="0.01" name="loan_int_rate" placeholder="Loan Interest Rate" required>
+            </div>
+
+            <div class="grid-item">
+
+                <label>Loan Percent of Income:</label>
+                <input type="number" step="0.01" id="loan_percent_income" name="loan_percent_income" readonly>
+            </div>
+
+            <!-- DROPDOWNS -->
+            <div class="grid-item">
+
+                <label>Home Ownership:</label>
+                <select name="person_home_ownership" required>
+                    <option value="RENT">RENT</option>
+                    <option value="OWN">OWN</option>
+                    <option value="MORTGAGE">MORTGAGE</option>
+                    <option value="OTHER">OTHER</option>
+                </select>
+            </div>
+
+            <div class="grid-item">
+
+                <label>Loan Intent:</label>
+                <select name="loan_intent" required>
+                    <option value="PERSONAL">PERSONAL</option>
+                    <option value="EDUCATION">EDUCATION</option>
+                    <option value="MEDICAL">MEDICAL</option>
+                    <option value="VENTURE">VENTURE</option>
+                    <option value="HOMEIMPROVEMENT">HOMEIMPROVEMENT</option>
+                    <option value="DEBTCONSOLIDATION">DEBTCONSOLIDATION</option>
+                </select>
+            </div>
+
+            <div class="grid-item">
+
+                <label>Loan Grade:</label>
+                <select name="loan_grade" required>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="G">G</option>
+                </select>
+            </div>
+
+            <div class="grid-item">
+                <label>Historical Default on File:</label>
+                <select name="cb_person_default_on_file" required>
+                    <option value="N">No (N)</option>
+                    <option value="Y">Yes (Y)</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn">Predict</button>
+        </form>
+
+        {% if result %}
+        <div class="result {{ 'danger' if result.prediction == 'Default' else 'success' }}">
+            <strong>Prediction:</strong> {{ result.prediction }} <br>
+            <strong>Probability of Default:</strong> {{ result.probability }}%
+        </div>
+        {% endif %}
+
+    </div>
+    <script>
+        const calculate_lpi = () => {
+            const annual_income = parseFloat(document.getElementById("annual_income").value);
+            const loan_amount = parseFloat(document.getElementById("loan_amount").value);
+
+            if (!annual_income || !loan_amount || annual_income === 0) {
+                document.getElementById("loan_percent_income").value = "";
+                return;
+            }
+
+            const loan_percent_income = loan_amount / annual_income;
+            document.getElementById("loan_percent_income").value = loan_percent_income.toFixed(4);
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("annual_income").addEventListener("input", calculate_lpi);
+            document.getElementById("loan_amount").addEventListener("input", calculate_lpi);
+        });
+    </script>
+
+</body>
+
+</html>
